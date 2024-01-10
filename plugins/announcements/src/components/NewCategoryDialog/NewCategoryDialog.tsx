@@ -6,7 +6,13 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Select,
+  MenuItem,
+  ListItemIcon,
+  ListItemAvatar,
+  Avatar,
 } from '@material-ui/core';
+import ErrorIcon from '@material-ui/icons/Error';
 import { alertApiRef, useApi } from '@backstage/core-plugin-api';
 import { announcementsApiRef } from '../../api';
 
@@ -20,6 +26,7 @@ export const NewCategoryDialog = (props: NewCategoryDialogProps) => {
   const alertApi = useApi(alertApiRef);
 
   const [title, setTitle] = React.useState('');
+  const [selectedOption, setSelectedOption] = React.useState(''); // State for selected option
 
   const onClose = () => {
     props.onClose();
@@ -29,6 +36,7 @@ export const NewCategoryDialog = (props: NewCategoryDialogProps) => {
     try {
       await announcementsApi.createCategory({
         title,
+        // selectedOption, // TODO: Add selected Options here
       });
       alertApi.post({ message: 'Category created.', severity: 'success' });
       props.onClose();
@@ -39,6 +47,10 @@ export const NewCategoryDialog = (props: NewCategoryDialogProps) => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+  };
+
+  const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedOption(event.target.value as string);
   };
 
   return (
@@ -55,6 +67,29 @@ export const NewCategoryDialog = (props: NewCategoryDialogProps) => {
           type="text"
           fullWidth
         />
+        {/* TODO: Select a predefined list of category icons */}
+        <Select
+          label="Select a category icon"
+          value={selectedOption}
+          onChange={handleSelectChange}
+          fullWidth
+        >
+          <MenuItem value="option1">
+            <ListItemIcon>
+              <ErrorIcon />
+            </ListItemIcon>
+            Important
+          </MenuItem>
+          <MenuItem value="option2">
+            <ListItemAvatar>
+              <Avatar>
+                <ErrorIcon />
+              </Avatar>
+            </ListItemAvatar>{' '}
+            Important
+          </MenuItem>
+          <MenuItem value="option3">Icon 3</MenuItem>
+        </Select>
       </DialogContent>
 
       <DialogActions>
